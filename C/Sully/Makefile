@@ -48,11 +48,18 @@ clean:
 fclean:		clean
 	@rm -f $(NAME)
 	@echo "$(RED)Removing $(IRED)$(NAME)$(RESET)"
+# *(N) ignores the error if the directory is empty
+	@rm -rf ./out/*(N)
 
 diff:	$(NAME)
 	@echo "$(PURPLE)Diffing $(PURPLE_BOLD)$(NAME)$(RESET)"
-#	@echo diff Sully_kid.c $(NAME).c
-#	@diff Sully_kid.c $(NAME).c && echo "$(GREEN_BOLD)Diff successful$(RESET)" || echo "$(RED_BOLD)Diff failed$(RESET)"
+	@echo diff Sully.c ./out/Sully_5.c
+	@diff Sully.c ./out/Sully_5.c && echo "$(GREEN_BOLD)Diff successful$(RESET)" || echo "$(RED_BOLD)Diff failed$(RESET)"
+	diff ./out/Sully_5.c ./out/Sully_4.c || true
+	diff ./out/Sully_4.c ./out/Sully_3.c || true
+	diff ./out/Sully_3.c ./out/Sully_2.c || true
+	diff ./out/Sully_2.c ./out/Sully_1.c || true
+	diff ./out/Sully_1.c ./out/Sully_0.c || true
 
 re:			fclean all
 
