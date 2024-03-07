@@ -1,8 +1,8 @@
-SRCS = Colleen.c
+SRCS = Grace.c
 
 OBJS = $(SRCS:.c=.o)
 
-NAME = Colleen
+NAME = Grace
 
 CC = gcc
 
@@ -50,11 +50,9 @@ fclean:		clean
 	@echo "$(RED)Removing $(IRED)$(NAME)$(RESET)"
 
 diff:	$(NAME)
-	@./$(NAME) > tmp_diff
 	@echo "$(PURPLE)Diffing $(PURPLE_BOLD)$(NAME)$(RESET)"
-	@echo diff tmp_diff $(NAME).c
-	@diff tmp_diff $(NAME).c && echo "$(GREEN_BOLD)Diff successful$(RESET)" || echo "$(RED_BOLD)Diff failed$(RESET)"
-	@rm -f tmp_diff
+	@echo diff Grace_kid.c $(NAME).c
+	@diff Grace_kid.c $(NAME).c && echo "$(GREEN_BOLD)Diff successful$(RESET)" || echo "$(RED_BOLD)Diff failed$(RESET)"
 
 re:			fclean all
 
