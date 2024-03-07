@@ -1,12 +1,12 @@
-SRCS = Grace.c
+SRCS = Sully.c
 
 OBJS = $(SRCS:.c=.o)
 
-NAME = Grace
+NAME = ./out/Sully
 
 CC = gcc
 
-CFLAGS =  -Wall -Wextra -Werror
+CFLAGS =  -Wall -Wextra -Werror -g -fsanitize=address
 
 SHELL = zsh
 
@@ -48,12 +48,11 @@ clean:
 fclean:		clean
 	@rm -f $(NAME)
 	@echo "$(RED)Removing $(IRED)$(NAME)$(RESET)"
-	@rm -f Grace_kid.c
 
 diff:	$(NAME)
 	@echo "$(PURPLE)Diffing $(PURPLE_BOLD)$(NAME)$(RESET)"
-	@echo diff Grace_kid.c $(NAME).c
-	@diff Grace_kid.c $(NAME).c && echo "$(GREEN_BOLD)Diff successful$(RESET)" || echo "$(RED_BOLD)Diff failed$(RESET)"
+#	@echo diff Sully_kid.c $(NAME).c
+#	@diff Sully_kid.c $(NAME).c && echo "$(GREEN_BOLD)Diff successful$(RESET)" || echo "$(RED_BOLD)Diff failed$(RESET)"
 
 re:			fclean all
 
