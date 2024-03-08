@@ -1,12 +1,16 @@
-SRCS = Sully.c
+SRCS = Sully.s
 
-OBJS = $(SRCS:.c=.o)
+OBJS = $(SRCS:.s=.o)
 
 NAME = ./out/Sully
 
-CC = gcc
+CC = nasm
+LINKER = ld
 
-CFLAGS =  -Wall -Wextra -Werror -g -fsanitize=address
+CFLAGS =  -f elf64
+# https://stackoverflow.com/questions/3577922/how-to-link-a-gas-assembly-program-that-uses-the-c-standard-library-with-ld-with
+# these are the flags gcc uses to compile with libc, we need to call our main `main`, and now we can call printf etc. 
+LFLAGS = -dynamic-linker /lib64/ld-linux-x86-64.so.2 /usr/lib/x86_64-linux-gnu/crt1.o /usr/lib/x86_64-linux-gnu/crti.o /usr/lib/x86_64-linux-gnu/crtn.o
 
 SHELL = zsh
 
@@ -28,16 +32,15 @@ SAME_LINE = \033[0G\033[2K
 
 RESET = \033[0m
 
-%.o: %.c
-	@$(CC) $(CFLAGS) -c $< -o $@
+%.o: %.s
+	@$(CC) $(CFLAGS) $< -o $@
 	@echo -n "$(SAME_LINE)$(AQUA)Compiling $(AQUA_BOLD)$<$(RESET)"
 
 # need .h files so will recompile when header changes
 $(NAME):	$(OBJS)
 	@echo
-	@mkdir -p ./out
 	@echo "$(PURPLE)Linking ($(PURPLE)*.o) into $(PURPLE_BOLD)$(NAME)$(RESET)"
-	@$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
+	@$(LINKER) $(LFLAGS) -lc $(OBJS) -o $(NAME) 
 	@echo "$(GREEN_BOLD)Done compiling $(GREEN_UNDERLINE)$(NAME)$(RESET)"
 
 all:		$(NAME)
@@ -54,13 +57,13 @@ fclean:		clean
 
 diff:	$(NAME)
 	@echo "$(PURPLE)Diffing $(PURPLE_BOLD)$(NAME)$(RESET)"
-	@echo diff Sully.c ./out/Sully_5.c
-	@diff Sully.c ./out/Sully_5.c && echo "$(GREEN_BOLD)Diff successful$(RESET)" || echo "$(RED_BOLD)Diff failed$(RESET)"
-	diff ./out/Sully_5.c ./out/Sully_4.c || true
-	diff ./out/Sully_4.c ./out/Sully_3.c || true
-	diff ./out/Sully_3.c ./out/Sully_2.c || true
-	diff ./out/Sully_2.c ./out/Sully_1.c || true
-	diff ./out/Sully_1.c ./out/Sully_0.c || true
+	@echo diff Sully.s ./out/Sully_5.s
+	@diff Sully.s ./out/Sully_5.s && echo "$(GREEN_BOLD)Diff successful$(RESET)" || echo "$(RED_BOLD)Diff failed$(RESET)"
+	diff ./out/Sully_5.s ./out/Sully_4.s || true
+	diff ./out/Sully_4.s ./out/Sully_3.s || true
+	diff ./out/Sully_3.s ./out/Sully_2.s || true
+	diff ./out/Sully_2.s ./out/Sully_1.s || true
+	diff ./out/Sully_1.s ./out/Sully_0.s || true
 
 re:			fclean all
 
