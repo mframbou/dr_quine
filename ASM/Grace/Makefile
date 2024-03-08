@@ -1,12 +1,16 @@
-SRCS = Grace.c
+SRCS = Grace.s
 
-OBJS = $(SRCS:.c=.o)
+OBJS = $(SRCS:.s=.o)
 
 NAME = Grace
 
-CC = gcc
+CC = nasm
+LINKER = ld
 
-CFLAGS =  -Wall -Wextra -Werror
+CFLAGS =  -f elf64
+# https://stackoverflow.com/questions/3577922/how-to-link-a-gas-assembly-program-that-uses-the-c-standard-library-with-ld-with
+# these are the flags gcc uses to compile with libc, we need to call our main `main`, and now we can call printf etc. 
+LFLAGS = -dynamic-linker /lib64/ld-linux-x86-64.so.2 /usr/lib/x86_64-linux-gnu/crt1.o /usr/lib/x86_64-linux-gnu/crti.o /usr/lib/x86_64-linux-gnu/crtn.o
 
 SHELL = zsh
 
@@ -28,15 +32,15 @@ SAME_LINE = \033[0G\033[2K
 
 RESET = \033[0m
 
-%.o: %.c
-	@$(CC) $(CFLAGS) -c $< -o $@
+%.o: %.s
+	@$(CC) $(CFLAGS) $< -o $@
 	@echo -n "$(SAME_LINE)$(AQUA)Compiling $(AQUA_BOLD)$<$(RESET)"
 
 # need .h files so will recompile when header changes
 $(NAME):	$(OBJS)
 	@echo
 	@echo "$(PURPLE)Linking ($(PURPLE)*.o) into $(PURPLE_BOLD)$(NAME)$(RESET)"
-	@$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
+	@$(LINKER) $(LFLAGS) -lc $(OBJS) -o $(NAME) 
 	@echo "$(GREEN_BOLD)Done compiling $(GREEN_UNDERLINE)$(NAME)$(RESET)"
 
 all:		$(NAME)
@@ -48,12 +52,12 @@ clean:
 fclean:		clean
 	@rm -f $(NAME)
 	@echo "$(RED)Removing $(IRED)$(NAME)$(RESET)"
-	@rm -f Grace_kid.c
+	@rm -f Grace_kid.s
 
 diff:	$(NAME)
 	@echo "$(PURPLE)Diffing $(PURPLE_BOLD)$(NAME)$(RESET)"
-	@echo diff Grace_kid.c $(NAME).c
-	@diff Grace_kid.c $(NAME).c && echo "$(GREEN_BOLD)Diff successful$(RESET)" || echo "$(RED_BOLD)Diff failed$(RESET)"
+	@echo diff Grace_kid.s $(NAME).s
+	@diff Grace_kid.s $(NAME).s && echo "$(GREEN_BOLD)Diff successful$(RESET)" || echo "$(RED_BOLD)Diff failed$(RESET)"
 
 re:			fclean all
 
