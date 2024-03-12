@@ -39,6 +39,7 @@ RESET = \033[0m
 # need .h files so will recompile when header changes
 $(NAME):	$(OBJS)
 	@echo
+	@mkdir -p ./out
 	@echo "$(PURPLE)Linking ($(PURPLE)*.o) into $(PURPLE_BOLD)$(NAME)$(RESET)"
 	@$(LINKER) $(LFLAGS) -lc $(OBJS) -o $(NAME) 
 	@echo "$(GREEN_BOLD)Done compiling $(GREEN_UNDERLINE)$(NAME)$(RESET)"
